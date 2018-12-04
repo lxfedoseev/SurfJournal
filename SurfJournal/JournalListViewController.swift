@@ -31,14 +31,14 @@ class JournalListViewController: UITableViewController {
 
   // MARK: IBOutlets
   @IBOutlet weak var exportButton: UIBarButtonItem!
-
+  
   // MARK: View Life Cycle
   override func viewDidLoad() {
     super.viewDidLoad()
 
     configureView()
   }
-
+  
   // MARK: Navigation
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
@@ -52,8 +52,13 @@ class JournalListViewController: UITableViewController {
 
       let surfJournalEntry = fetchedResultsController.object(at: indexPath)
 
-      detailViewController.journalEntry = surfJournalEntry
-      detailViewController.context = surfJournalEntry.managedObjectContext
+      let childContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+      childContext.parent = coreDataStack.mainContext
+
+      let childEntry = childContext.object(with: surfJournalEntry.objectID) as? JournalEntry
+
+      detailViewController.journalEntry = childEntry
+      detailViewController.context = childContext
       detailViewController.delegate = self
 
     } else if segue.identifier == "SegueListToDetailAdd" {
@@ -63,7 +68,10 @@ class JournalListViewController: UITableViewController {
           fatalError("Application storyboard mis-configuration")
       }
 
-      let newJournalEntry = JournalEntry(context: coreDataStack.mainContext)
+      let childContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+      childContext.parent = coreDataStack.mainContext
+
+      let newJournalEntry = JournalEntry(context: childContext)
 
       detailViewController.journalEntry = newJournalEntry
       detailViewController.context = newJournalEntry.managedObjectContext
@@ -86,64 +94,67 @@ private extension JournalListViewController {
   func configureView() {
     fetchedResultsController = journalListFetchedResultsController()
   }
-
+  
   func exportCSVFile() {
     navigationItem.leftBarButtonItem = activityIndicatorBarButtonItem()
 
-    let context = coreDataStack.mainContext
-    var results: [JournalEntry] = []
-    do {
-      results = try context.fetch(self.surfJournalFetchRequest())
-    } catch let error as NSError {
-      print("ERROR: \(error.localizedDescription)")
-    }
-
-    let exportFilePath = NSTemporaryDirectory() + "export.csv"
-    let exportFileURL = URL(fileURLWithPath: exportFilePath)
-    FileManager.default.createFile(atPath: exportFilePath, contents: Data(), attributes: nil)
-
-    let fileHandle: FileHandle?
-    do {
-      fileHandle = try FileHandle(forWritingTo: exportFileURL)
-    } catch let error as NSError {
-      print("ERROR: \(error.localizedDescription)")
-      fileHandle = nil
-    }
-
-    if let fileHandle = fileHandle {
-
-      for journalEntry in results {
-        fileHandle.seekToEndOfFile()
-        guard let csvData = journalEntry
-          .csv()
-          .data(using: .utf8, allowLossyConversion: false) else {
-            continue
-        }
-
-        fileHandle.write(csvData)
+    coreDataStack.storeContainer.performBackgroundTask { (context) in
+      var results: [JournalEntry] = []
+      do {
+        results = try context.fetch(self.surfJournalFetchRequest())
+      } catch let error as NSError {
+        print("ERROR: \(error.localizedDescription)")
       }
 
-      fileHandle.closeFile()
+      let exportFilePath = NSTemporaryDirectory() + "export.csv"
+      let exportFileURL = URL(fileURLWithPath: exportFilePath)
+      FileManager.default.createFile(atPath: exportFilePath, contents: Data(), attributes: nil)
 
-      print("Export Path: \(exportFilePath)")
-      self.navigationItem.leftBarButtonItem = self.exportBarButtonItem()
-      self.showExportFinishedAlertView(exportFilePath)
+      let fileHandle: FileHandle?
+      do {
+        fileHandle = try FileHandle(forWritingTo: exportFileURL)
+      } catch let error as NSError {
+        print("ERROR: \(error.localizedDescription)")
+        fileHandle = nil
+      }
 
-    } else {
-      self.navigationItem.leftBarButtonItem = self.exportBarButtonItem()
+      if let fileHandle = fileHandle {
+        for journalEntry in results {
+          fileHandle.seekToEndOfFile()
+          guard let csvData = journalEntry
+            .csv()
+            .data(using: .utf8, allowLossyConversion: false) else {
+              continue
+          }
+
+          fileHandle.write(csvData)
+        }
+
+        fileHandle.closeFile()
+
+        print("Export Path: \(exportFilePath)")
+        DispatchQueue.main.async {
+          self.navigationItem.leftBarButtonItem = self.exportBarButtonItem()
+          self.showExportFinishedAlertView(exportFilePath)
+        }
+      } else {
+        DispatchQueue.main.async {
+          self.navigationItem.leftBarButtonItem = self.exportBarButtonItem()
+        }
+      }
     }
   }
 
   // MARK: Export
-  
+
   func activityIndicatorBarButtonItem() -> UIBarButtonItem {
     let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
     let barButtonItem = UIBarButtonItem(customView: activityIndicator)
     activityIndicator.startAnimating()
-    
+
     return barButtonItem
   }
-  
+
   func exportBarButtonItem() -> UIBarButtonItem {
     return UIBarButtonItem(title: "Export", style: .plain, target: self, action: #selector(exportButtonTapped(_:)))
   }
@@ -189,7 +200,7 @@ private extension JournalListViewController {
 }
 
 // MARK: NSFetchedResultsControllerDelegate
-extension JournalListViewController: NSFetchedResultsControllerDelegate {
+extension JournalListViewController: NSFetchedResultsControllerDelegate{
 
   func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
     tableView.reloadData()
@@ -198,11 +209,11 @@ extension JournalListViewController: NSFetchedResultsControllerDelegate {
 
 // MARK: UITableViewDataSource
 extension JournalListViewController {
-  
+
   override func numberOfSections(in tableView: UITableView) -> Int {
     return fetchedResultsController.sections?.count ?? 0
   }
-  
+
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return fetchedResultsController.sections?[section].numberOfObjects ?? 0
   }
@@ -212,11 +223,11 @@ extension JournalListViewController {
     configureCell(cell, indexPath: indexPath)
     return cell
   }
-
-  private func configureCell(_ cell: SurfEntryTableViewCell, indexPath:IndexPath) {
+  
+  func configureCell(_ cell: SurfEntryTableViewCell, indexPath:IndexPath) {
     let surfJournalEntry = fetchedResultsController.object(at: indexPath)
     cell.dateLabel.text = surfJournalEntry.stringForDate()
-
+    
     guard let rating = surfJournalEntry.rating?.int32Value else { return }
 
     switch rating {
@@ -270,7 +281,7 @@ extension JournalListViewController {
 
 // MARK: JournalEntryDelegate
 extension JournalListViewController: JournalEntryDelegate {
-  
+
   func didFinish(viewController: JournalEntryViewController, didSave: Bool) {
 
     guard didSave,

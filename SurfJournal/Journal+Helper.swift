@@ -20,29 +20,31 @@
  * THE SOFTWARE.
  */
 
-import UIKit
+import Foundation
 import CoreData
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+extension JournalEntry {
 
-  var window: UIWindow?
-  lazy var coreDataStack = CoreDataStack(modelName: "SurfJournalModel")
+  func stringForDate() -> String {
+    guard let date = date else { return "" }
 
-  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-    _ = coreDataStack.mainContext
-
-    guard let navigationController = window?.rootViewController as? UINavigationController,
-      let listViewController = navigationController.topViewController as? JournalListViewController else {
-        fatalError("Application Storyboard mis-configuration")
-    }
-
-    listViewController.coreDataStack = coreDataStack
-
-    return true
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateStyle = .short
+    return dateFormatter.string(from: date)
   }
 
-  func applicationWillTerminate(_ application: UIApplication) {
-    coreDataStack.saveContext()
+  func csv() -> String {
+    let coalescedHeight = height ?? ""
+    let coalescedPeriod = period ?? ""
+    let coalescedWind = wind ?? ""
+    let coalescedLocation = location ?? ""
+    let coalescedRating: String
+    if let rating = rating?.int32Value {
+      coalescedRating = String(rating)
+    } else {
+      coalescedRating = ""
+    }
+
+    return "\(stringForDate()),\(coalescedHeight),\(coalescedPeriod),\(coalescedWind),\(coalescedLocation),\(coalescedRating)\n"
   }
 }

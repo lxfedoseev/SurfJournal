@@ -82,13 +82,14 @@ private extension JournalEntryViewController {
 
 // MARK: IBActions
 extension JournalEntryViewController {
-
+  
   @IBAction func cancelButtonWasTapped(_ sender: UIBarButtonItem) {
     delegate?.didFinish(viewController: self, didSave: false)
   }
-
+  
   @IBAction func saveButtonWasTapped(_ sender: UIBarButtonItem) {
     updateJournalEntry()
     delegate?.didFinish(viewController: self, didSave: true)
   }
 }
+

@@ -20,7 +20,7 @@
 		4AD2131619B257ED000CD6AB /* SurfJournalModel.sqlite-wal in Resources */ = {isa = PBXBuildFile; fileRef = 4AD2131319B253E0000CD6AB /* SurfJournalModel.sqlite-wal */; };
 		4ADEF5FE19AA73900005051C /* SurfEntryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADEF5FD19AA73900005051C /* SurfEntryTableViewCell.swift */; };
 		4ADEF60319AA78430005051C /* JournalEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADEF60219AA78420005051C /* JournalEntry.swift */; };
-		952D54A21D45405800F89B8B /* JournalEntry+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952D54A11D45405800F89B8B /* JournalEntry+Helper.swift */; };
+		952D54A61D454B1C00F89B8B /* Journal+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952D54A51D454B1C00F89B8B /* Journal+Helper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +52,7 @@
 		4ADEF5FD19AA73900005051C /* SurfEntryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SurfEntryTableViewCell.swift; sourceTree = "<group>"; };
 		4ADEF5FF19AA77FE0005051C /* SurfJournal-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SurfJournal-Bridging-Header.h"; sourceTree = "<group>"; };
 		4ADEF60219AA78420005051C /* JournalEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = JournalEntry.swift; sourceTree = "<group>"; tabWidth = 2; };
-		952D54A11D45405800F89B8B /* JournalEntry+Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = "JournalEntry+Helper.swift"; sourceTree = "<group>"; tabWidth = 2; };
+		952D54A51D454B1C00F89B8B /* Journal+Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = "Journal+Helper.swift"; sourceTree = "<group>"; tabWidth = 2; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,7 +102,7 @@
 				4A21E59B1997F68400FB9BC0 /* SurfJournalModel.xcdatamodeld */,
 				4A42A88B1997F4FC00398605 /* CoreDataStack.swift */,
 				4ADEF60219AA78420005051C /* JournalEntry.swift */,
-				952D54A11D45405800F89B8B /* JournalEntry+Helper.swift */,
+				952D54A51D454B1C00F89B8B /* Journal+Helper.swift */,
 				4A42A8751997F44300398605 /* Images.xcassets */,
 				4AD2130A19B252AC000CD6AB /* CoreDataSeed */,
 				4A42A86A1997F44300398605 /* Supporting Files */,
@@ -196,12 +196,10 @@
 				TargetAttributes = {
 					4A42A8661997F44300398605 = {
 						CreatedOnToolsVersion = 6.0;
-						DevelopmentTeam = 9D23U6XAWC;
 						LastSwiftMigration = 0800;
 					};
 					4A42A87A1997F44400398605 = {
 						CreatedOnToolsVersion = 6.0;
-						DevelopmentTeam = 9D23U6XAWC;
 						LastSwiftMigration = 0800;
 						TestTargetID = 4A42A8661997F44300398605;
 					};
@@ -257,8 +255,8 @@
 				4ADEF5FE19AA73900005051C /* SurfEntryTableViewCell.swift in Sources */,
 				4A32281519AA98E400355616 /* JournalListViewController.swift in Sources */,
 				4A21E59D1997F68400FB9BC0 /* SurfJournalModel.xcdatamodeld in Sources */,
-				952D54A21D45405800F89B8B /* JournalEntry+Helper.swift in Sources */,
 				4A32281319AA98A800355616 /* JournalEntryViewController.swift in Sources */,
+				952D54A61D454B1C00F89B8B /* Journal+Helper.swift in Sources */,
 				4A42A86D1997F44300398605 /* AppDelegate.swift in Sources */,
 				4A42A88C1997F4FC00398605 /* CoreDataStack.swift in Sources */,
 			);
@@ -380,11 +378,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = 9D23U6XAWC;
 				INFOPLIST_FILE = SurfJournal/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = ru.almaunion.SurfJournal;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.razeware.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SurfJournal/SurfJournal-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -398,11 +395,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = 9D23U6XAWC;
 				INFOPLIST_FILE = SurfJournal/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = ru.almaunion.SurfJournal;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.razeware.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SurfJournal/SurfJournal-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -414,7 +410,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 9D23U6XAWC;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -436,7 +431,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 9D23U6XAWC;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
